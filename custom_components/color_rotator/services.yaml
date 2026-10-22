@@ -1,0 +1,5 @@
+next_color:
+  target:
+    entity:
+      integration: color_rotator
+      domain: switch

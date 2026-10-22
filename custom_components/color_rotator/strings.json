@@ -1,0 +1,21 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "New rotation group",
+        "description": "Name this group. Add lights, colors and a schedule from the Color Rotator card.",
+        "data": { "name": "Name" }
+      }
+    },
+    "error": {
+      "required": "A name is required.",
+      "already_exists": "A group with this name already exists."
+    }
+  },
+  "services": {
+    "next_color": {
+      "name": "Next color",
+      "description": "Advance a running rotation group to its next color immediately."
+    }
+  }
+}
