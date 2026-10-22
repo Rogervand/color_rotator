@@ -106,6 +106,20 @@ async def async_restore_snapshot(hass: HomeAssistant, snapshot: dict, transition
             _LOGGER.exception("Failed to restore %s", entity_id)
 
 
+def split_color(rgb: list[int], brightness_pct: int) -> tuple[list[int], int]:
+    """Separate a color's darkness from its hue.
+
+    Lights store color as hue/saturation and brightness separately, so sending
+    maroon (128,0,0) as rgb_color looks identical to red. Normalise the RGB to
+    full intensity and fold the darkness into brightness instead.
+    """
+    peak = max(rgb)
+    if peak == 0:
+        return [0, 0, 0], 0
+    full = [round(c * 255 / peak) for c in rgb]
+    return full, max(1, round(brightness_pct * peak / 255))
+
+
 def _hex(rgb: list[int]) -> str:
     return "#{:02x}{:02x}{:02x}".format(*rgb)
 
@@ -293,14 +307,16 @@ class Rotator:
             if self.settings["global_brightness_enabled"]
             else color.get("brightness", 100)
         )
-        data: dict[str, Any] = {
-            ATTR_ENTITY_ID: entity_ids,
-            "rgb_color": list(color["rgb"]),
-            "brightness_pct": brightness,
-        }
+        rgb, brightness = split_color(color["rgb"], brightness)
+        data: dict[str, Any] = {ATTR_ENTITY_ID: entity_ids}
         if self.settings["transition"]:
             data["transition"] = self.settings["transition"]
         try:
+            if brightness == 0:  # black: nothing to show
+                await self.hass.services.async_call(LIGHT, "turn_off", data, blocking=False)
+                return
+            data["rgb_color"] = rgb
+            data["brightness_pct"] = brightness
             await self.hass.services.async_call(LIGHT, "turn_on", data, blocking=False)
         except Exception:  # noqa: BLE001
             _LOGGER.exception("Failed to set %s on %s", color, entity_ids)

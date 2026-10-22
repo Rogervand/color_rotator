@@ -56,7 +56,8 @@ Edits are held locally until you press **Save**.
 - **Removing a light** from a running group restores that light, or turns it off, according to the group's end action.
 - **Unavailable lights** are skipped on each change.
 - **Very short intervals.** With a 5-second interval and many lights, consider a fade of 1–2 s. Zigbee and Z-Wave networks may lag at the shortest intervals.
-- **Dark colors.** Black and the darkest grays render as off on most bulbs.
+- **Dark colors** (maroon, navy, gray…) are sent as their full-intensity hue at a proportionally lower brightness, because bulbs store hue and brightness separately. Black turns the lights off. This dimming still applies when global brightness is on.
+- **Pale colors** (ivory, linen, lavenderblush, the whites) have very little saturation and show as near-white on most bulbs. The distinction is only visible on good RGBW/RGBWW lights.
 
 ## Automations
 

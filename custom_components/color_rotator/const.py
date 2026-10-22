@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 DOMAIN = "color_rotator"
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 
 CARD_FILENAME = "color-rotator-card.js"
 CARD_URL = f"/{DOMAIN}/{CARD_FILENAME}"

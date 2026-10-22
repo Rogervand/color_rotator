@@ -219,3 +219,23 @@ async def test_card_served(hass: HomeAssistant, hass_client):
     resp = await client.get("/color_rotator/color-rotator-card.js")
     assert resp.status == 200
     assert "color-rotator-card" in await resp.text()
+
+
+async def test_dark_colors_become_dimmer_not_identical(hass: HomeAssistant):
+    colors = [
+        {"name": "maroon", "rgb": [128, 0, 0], "brightness": 100},
+        {"name": "gray", "rgb": [128, 128, 128], "brightness": 80},
+        {"name": "black", "rgb": [0, 0, 0], "brightness": 100},
+    ]
+    entry, on, off = await _setup(hass, colors=colors, global_brightness_enabled=False)
+    rot = entry.runtime_data
+    await rot.async_start()
+    await hass.async_block_till_done()
+    assert on[-1].data["rgb_color"] == [255, 0, 0] and on[-1].data["brightness_pct"] == 50
+    await rot.async_skip()
+    await hass.async_block_till_done()
+    assert on[-1].data["rgb_color"] == [255, 255, 255] and on[-1].data["brightness_pct"] == 40
+    n_off = len(off)
+    await rot.async_skip()
+    await hass.async_block_till_done()
+    assert len(off) == n_off + 1
