@@ -239,3 +239,28 @@ async def test_dark_colors_become_dimmer_not_identical(hass: HomeAssistant):
     await rot.async_skip()
     await hass.async_block_till_done()
     assert len(off) == n_off + 1
+
+
+async def test_card_registered_as_dashboard_resource(hass: HomeAssistant):
+    from pathlib import Path
+
+    from homeassistant.components.lovelace.const import LOVELACE_DATA
+
+    from custom_components.color_rotator.const import VERSION
+    from custom_components.color_rotator.frontend import LOCAL_URL, _async_ensure_resource
+
+    await _setup(hass)
+    copied = Path(hass.config.path("www")) / "color_rotator" / "color-rotator-card.js"
+    assert copied.is_file() and "color-rotator-card" in copied.read_text()
+
+    resources = hass.data[LOVELACE_DATA].resources
+    ours = [r for r in resources.async_items() if r["url"].startswith(LOCAL_URL)]
+    assert len(ours) == 1
+    assert ours[0]["url"] == f"{LOCAL_URL}?v={VERSION}" and ours[0]["type"] == "module"
+
+    # An old version gets updated in place, and running again never duplicates.
+    await resources.async_update_item(ours[0]["id"], {"url": f"{LOCAL_URL}?v=0.0.1"})
+    await _async_ensure_resource(hass)
+    await _async_ensure_resource(hass)
+    ours = [r for r in resources.async_items() if r["url"].startswith(LOCAL_URL)]
+    assert len(ours) == 1 and ours[0]["url"].endswith(VERSION)

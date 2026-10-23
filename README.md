@@ -27,7 +27,14 @@ Requires Home Assistant 2026.8 or newer.
 
 Copy `custom_components/color_rotator` into `/config/custom_components/` and restart.
 
-You do **not** need to add a dashboard resource. The integration registers the card automatically.
+You do **not** need to add a dashboard resource. The integration registers the card automatically: it copies the card to `/config/www/color_rotator/` and adds it as a dashboard resource, so the card loads even if a dashboard opens while Home Assistant is still starting. On the very first start after installing, refresh the browser once.
+
+If your dashboards use YAML-mode resources, add this resource yourself:
+
+```yaml
+- url: /local/color_rotator/color-rotator-card.js
+  type: module
+```
 
 ## Card
 

@@ -1,5 +1,5 @@
 /* Color Rotator card — served by the color_rotator integration. No build step. */
-const CR_VERSION = "1.0.2";
+const CR_VERSION = "1.0.3";
 const MIN_INTERVAL = 5;
 const MAX_INTERVAL = 8 * 3600;
 const RGB_MODES = ["hs", "xy", "rgb", "rgbw", "rgbww"];
@@ -141,14 +141,14 @@ class ColorRotatorCard extends HTMLElement {
     const first = !this._hass;
     this._hass = hass;
     if (!this._config) return;
-    if (first || (!this._group && !this._loading && !this._loadError)) { this._load(); return; }
+    if (first || (!this._group && !this._loading && !this._loadError && !this._retryTimer)) { this._load(); return; }
     this._syncFromSwitch();
   }
 
   getCardSize() { return 3; }
 
   connectedCallback() { this._timer = setInterval(() => this._tickCountdown(), 1000); }
-  disconnectedCallback() { clearInterval(this._timer); }
+  disconnectedCallback() { clearInterval(this._timer); clearTimeout(this._retryTimer); this._retryTimer = null; }
 
   /* ---------------- data ---------------- */
   async _load() {
@@ -158,7 +158,17 @@ class ColorRotatorCard extends HTMLElement {
       const g = await this._hass.callWS({ type: "color_rotator/get", entry_id: this._config.entry_id });
       this._setGroup(g, true);
       this._loadError = "";
+      this._retries = 0;
     } catch (err) {
+      // During startup the integration may not be loaded yet: retry quietly for a while.
+      this._retries = (this._retries || 0) + 1;
+      if (this._retries <= 24) {
+        this._loading = false;
+        clearTimeout(this._retryTimer);
+        this._retryTimer = setTimeout(() => { this._retryTimer = null; this._load(); }, 5000);
+        this._render();
+        return;
+      }
       this._loadError = err.message || String(err);
     }
     this._loading = false;
@@ -336,7 +346,7 @@ class ColorRotatorCard extends HTMLElement {
   _content() {
     if (!this._config?.entry_id) return `<div class="empty">Pick a rotation group in the card editor.</div>`;
     if (this._loadError) return `<div class="err">Color Rotator: ${esc(this._loadError)}</div>`;
-    if (!this._group || !this._draft) return `<div class="empty">Loading…</div>`;
+    if (!this._group || !this._draft) return `<div class="empty">${this._retries ? "Waiting for Home Assistant to finish starting…" : "Loading…"}</div>`;
     return `
       <div id="status">${this._statusHtml()}</div>
       ${this._lightsHtml()}

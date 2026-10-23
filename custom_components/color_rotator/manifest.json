@@ -6,9 +6,10 @@
   ],
   "config_flow": true,
   "dependencies": [
-    "http",
     "frontend",
+    "http",
     "light",
+    "lovelace",
     "websocket_api"
   ],
   "documentation": "https://github.com/Rogervand/color_rotator",
@@ -16,5 +17,5 @@
   "iot_class": "calculated",
   "issue_tracker": "https://github.com/Rogervand/color_rotator/issues",
   "requirements": [],
-  "version": "1.0.2"
+  "version": "1.0.3"
 }

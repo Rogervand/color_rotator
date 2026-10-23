@@ -1,17 +1,14 @@
 """Color Rotator: rotate lights through color lists on a schedule."""
 from __future__ import annotations
 
-from pathlib import Path
-
-from homeassistant.components.frontend import add_extra_js_url
-from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.typing import ConfigType
 
-from .const import CARD_FILENAME, CARD_URL, DOMAIN, VERSION
+from .const import DOMAIN
+from .frontend import async_register_card
 from .rotator import Rotator, RuntimeStore, async_restore_snapshot
 from .websocket_api import async_register_websocket
 
@@ -29,11 +26,7 @@ async def _async_domain_data(hass: HomeAssistant) -> dict:
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     await _async_domain_data(hass)
-    card = Path(__file__).parent / "www" / CARD_FILENAME
-    await hass.http.async_register_static_paths(
-        [StaticPathConfig(CARD_URL, str(card), True)]
-    )
-    add_extra_js_url(hass, f"{CARD_URL}?v={VERSION}")
+    await async_register_card(hass)
     async_register_websocket(hass)
     return True
 
