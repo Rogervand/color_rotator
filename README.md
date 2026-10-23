@@ -1,5 +1,8 @@
 # Color Rotator
 
+[![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz)
+[![Validate](https://github.com/Rogervand/color_rotator/actions/workflows/validate.yml/badge.svg)](https://github.com/Rogervand/color_rotator/actions/workflows/validate.yml)
+
 A Home Assistant integration and dashboard card that rotates RGB lights through a list of colors, on an interval and an optional schedule. A single HACS install provides both: the integration serves and registers its own card.
 
 ## Concepts
@@ -9,15 +12,20 @@ A Home Assistant integration and dashboard card that rotates RGB lights through 
 
 Rotation runs inside Home Assistant, not in the browser. It keeps going with no dashboard open and resumes after a restart.
 
-## Install (HACS custom repository)
+## Install
 
-1. Push this folder to a GitHub repo, which can be private.
-2. In HACS, open **⋮ → Custom repositories**, add the repo URL and choose type **Integration**.
-3. Install **Color Rotator** and restart Home Assistant.
-4. Go to **Settings → Devices & services → Add integration → Color Rotator** and name your first group. You can also create groups from the card editor.
-5. Hard-refresh the browser once so the card JS loads.
+Requires Home Assistant 2026.8 or newer.
 
-**Manual install:** copy `custom_components/color_rotator` into `/config/custom_components/` and restart.
+### HACS
+
+1. In HACS, open **⋮ → Custom repositories**, add `https://github.com/Rogervand/color_rotator` and choose type **Integration**. You can skip this step once Color Rotator is listed in the HACS default store.
+2. Search HACS for **Color Rotator**, download it and restart Home Assistant.
+3. Go to **Settings → Devices & services → Add integration → Color Rotator** and name your first group. You can also create groups from the card editor.
+4. Hard-refresh the browser once so the card JS loads.
+
+### Manual
+
+Copy `custom_components/color_rotator` into `/config/custom_components/` and restart.
 
 You do **not** need to add a dashboard resource. The integration registers the card automatically.
 
@@ -81,9 +89,17 @@ The switch's attributes include:
 - `entities`
 - `interval`
 
+## Issues
+
+Report bugs and requests at [GitHub issues](https://github.com/Rogervand/color_rotator/issues).
+
 ## Development
 
 ```bash
 pip install pytest-homeassistant-custom-component
 pytest tests
 ```
+
+## License
+
+MIT
