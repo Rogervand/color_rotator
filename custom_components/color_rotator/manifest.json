@@ -1,13 +1,23 @@
 {
   "domain": "color_rotator",
   "name": "Color Rotator",
-  "codeowners": [],
+  "categories": [
+    "lighting"
+  ],
+  "codeowners": [
+    "@Rogervand"
+  ],
   "config_flow": true,
-  "dependencies": ["http", "frontend", "light", "websocket_api"],
-  "documentation": "https://github.com/your-github/color_rotator",
+  "dependencies": [
+    "http",
+    "frontend",
+    "light",
+    "websocket_api"
+  ],
+  "documentation": "https://github.com/Rogervand/color_rotator",
   "integration_type": "service",
   "iot_class": "calculated",
-  "issue_tracker": "https://github.com/your-github/color_rotator/issues",
+  "issue_tracker": "https://github.com/Rogervand/color_rotator/issues",
   "requirements": [],
   "version": "1.0.2"
 }
