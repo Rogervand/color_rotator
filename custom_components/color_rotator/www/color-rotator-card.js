@@ -1,5 +1,5 @@
 /* Color Rotator card — served by the color_rotator integration. No build step. */
-const CR_VERSION = "1.0.1";
+const CR_VERSION = "1.0.2";
 const MIN_INTERVAL = 5;
 const MAX_INTERVAL = 8 * 3600;
 const RGB_MODES = ["hs", "xy", "rgb", "rgbw", "rgbww"];
