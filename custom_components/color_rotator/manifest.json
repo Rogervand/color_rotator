@@ -1,6 +1,9 @@
 {
   "domain": "color_rotator",
   "name": "Color Rotator",
+  "categories": [
+    "lighting"
+  ],
   "codeowners": [
     "@Rogervand"
   ],
